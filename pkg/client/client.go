@@ -4,11 +4,12 @@ import (
   "encoding/base64"
   "fmt"
   "github.com/spf13/viper"
+  "io"
   "io/ioutil"
   "net/http"
 )
 
-func clientAuthorization() ([]byte, error) {
+func ClientAuthorization() ([]byte, error) {
   req, err := http.NewRequest("POST", "https://apitestenv.vnforapps.com/api.security/v1/security", nil)
   if err != nil {
     return nil, err
@@ -36,6 +37,37 @@ func clientAuthorization() ([]byte, error) {
   }
 
   if res.StatusCode == 201 {
+    return obj, nil
+  }
+
+  return nil, err
+}
+
+func Client(method string, url string, body io.Reader, token string) ([]byte, error) {
+  req, err := http.NewRequest(method, url, body)
+  if err != nil {
+    return nil, err
+  }
+  req.Header.Set("Authorization", token)
+
+  c := &http.Client{}
+  res, err := c.Do(req)
+  if err != nil {
+    return nil, err
+  }
+  defer res.Body.Close()
+
+  obj, err := ioutil.ReadAll(res.Body)
+  if err != nil {
+    return nil, err
+  }
+
+  if err != nil {
+    err = fmt.Errorf("%v: %s", err, string(obj))
+    return nil, err
+  }
+
+  if res.StatusCode == 200 {
     return obj, nil
   }
 
