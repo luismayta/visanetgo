@@ -2,7 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"os"
+  "github.com/equipindustry/visanetgo/config"
+  "os"
 
 	pkg "github.com/equipindustry/visanetgo/pkg/version"
 	"github.com/spf13/cobra"
@@ -23,6 +24,9 @@ var rootCmd = &cobra.Command{
 	Long: `Visanet client
                 love by EquipIndustry in Go.
                 Complete documentation is available at https://github.com/equipindustry/visanetgo`,
+  PreRunE: func(cmd *cobra.Command, args []string) error {
+    return config.InitializeViper()
+  },
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if version {
 			return printVersion()
