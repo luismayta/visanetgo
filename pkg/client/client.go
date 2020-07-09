@@ -10,7 +10,8 @@ import (
 )
 
 func ClientAuthorization() ([]byte, error) {
-  req, err := http.NewRequest("POST", "https://apitestenv.vnforapps.com/api.security/v1/security", nil)
+  url := viper.Get("VISANET_DEV_AUTHORIZATION_API")
+  req, err := http.NewRequest("POST", url, nil)
   if err != nil {
     return nil, err
   }
