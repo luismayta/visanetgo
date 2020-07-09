@@ -1,0 +1,36 @@
+# Docker Compose
+# https://docs.docker.com/compose/
+#
+# Usage: test up
+
+version: '3.6'
+services:
+  # PostgreSQL database.
+  db-test:
+    restart: always
+    image: postgres:11.6
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=equipindustry-visanet-test
+    env_file:
+      - .env
+    volumes:
+      - db-test:/var/lib/postgresql/data # Using the declared volume.
+
+  app:
+    image: equipindustry-visanet-app-test
+    environment: &environment
+      - EQUIP_CORE_APP_ENV=testing
+      - EQUIP_CORE_DATABASE_NAME=equipindustry-visanet-test
+      - EQUIP_CORE_DATABASE_URL=postgres://postgres:postgres@db:5432/equipindustry-visanet-test?sslmode=disable
+    build:
+      args:
+        stage: test
+    volumes:
+      - .:/usr/src
+    depends_on:
+      - db-test
+
+volumes:
+  db-test:

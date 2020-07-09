@@ -1,0 +1,47 @@
+# Docker Compose
+# https://docs.docker.com/compose/
+# Usage: docker-compose up
+---
+version: '3.6'
+
+services:
+  app:
+    ports:
+      - '8000:8000'
+      - '8080:5000'
+    build:
+      context: .
+      dockerfile: provision/docker/app/Dockerfile
+    depends_on:
+      - db
+    environment: &environment
+      - EQUIP_CORE_APP_ENV=dev
+      - EQUIP_CORE_VERBOSE=False
+    volumes:
+      - .:/usr/src
+    env_file:
+      - .env
+
+  builder:
+    environment: *environment
+    build:
+      context: .
+      dockerfile: provision/docker/builder/Dockerfile
+    volumes:
+      - .:/usr/src
+    env_file:
+      - .env
+
+  docs:
+    restart: always
+    image: equipindustry-visanet-app-docs
+    build:
+      context: .
+      dockerfile: provision/docker/docs/Dockerfile
+    volumes:
+      - .:/usr/src
+    env_file:
+      - .env
+
+volumes:
+  db:
