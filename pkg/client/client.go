@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/equipindustry/visanetgo/pkg/api/status"
 	"github.com/spf13/viper"
 )
 
@@ -39,7 +40,7 @@ func Authorization() ([]byte, error) {
 		return nil, err
 	}
 
-	if res.StatusCode == 201 {
+	if res.StatusCode == status.Created {
 		return obj, nil
 	}
 
@@ -71,7 +72,7 @@ func Client(method string, url string, body io.Reader, token string) ([]byte, er
 		return nil, err
 	}
 
-	if res.StatusCode == 200 {
+	if res.StatusCode == status.Ok {
 		return obj, nil
 	}
 
